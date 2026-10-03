@@ -1,0 +1,428 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | Workforce Hub</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: #f5f6fb;
+            color: #20243a;
+            font-family: Arial, sans-serif;
+        }
+
+        .layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 245px;
+            flex-shrink: 0;
+            background: #ffffff;
+            padding: 25px 16px;
+            border-right: 1px solid #eeeeF5;
+        }
+
+        .brand {
+            font-size: 22px;
+            font-weight: bold;
+            color: #5146d8;
+            margin: 0 10px 35px;
+        }
+
+        .nav-label {
+            color: #9297a8;
+            font-size: 11px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            margin: 25px 12px 10px;
+        }
+
+        .nav-item {
+            display: block;
+            padding: 12px 14px;
+            margin: 5px 0;
+            border-radius: 9px;
+            color: #555b70;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .nav-item:hover,
+        .nav-item.active {
+            background: #efeeff;
+            color: #5146d8;
+        }
+
+        .logout {
+            color: #d94b5b;
+        }
+
+        .main {
+            flex: 1;
+            min-width: 0;
+            padding: 30px;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .topbar h1 {
+            margin: 0 0 6px;
+            font-size: 27px;
+        }
+
+        .subtitle {
+            margin: 0;
+            color: #858a9b;
+            font-size: 14px;
+        }
+
+        .user-info {
+            text-align: right;
+            font-size: 14px;
+        }
+
+        .user-info strong {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .user-info span {
+            color: #858a9b;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 18px;
+            margin-bottom: 25px;
+        }
+
+        .card,
+        .section {
+            background: #ffffff;
+            border-radius: 14px;
+            box-shadow: 0 4px 18px #20243a0c;
+        }
+
+        .card {
+            padding: 23px;
+        }
+
+        .card-label {
+            color: #858a9b;
+            font-size: 14px;
+            margin-bottom: 13px;
+        }
+
+        .card-value {
+            font-size: 30px;
+            font-weight: bold;
+            color: #20243a;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr;
+            gap: 20px;
+        }
+
+        .section {
+            padding: 24px;
+            min-width: 0;
+        }
+
+        .section h2 {
+            margin: 0 0 20px;
+            font-size: 18px;
+        }
+
+        .table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 13px 10px;
+            text-align: left;
+            border-bottom: 1px solid #eeeef4;
+            font-size: 14px;
+        }
+
+        th {
+            color: #858a9b;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        td {
+            color: #454b60;
+        }
+
+        .count {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            background: #efeeff;
+            color: #5146d8;
+            font-weight: bold;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 5px 9px;
+            border-radius: 20px;
+            background: #e8f7ee;
+            color: #23834b;
+            font-size: 12px;
+        }
+
+        .status.inactive {
+            background: #fcebed;
+            color: #c13f50;
+        }
+
+        .status.leave {
+            background: #fff4df;
+            color: #9a6814;
+        }
+
+        .empty {
+            color: #858a9b;
+            text-align: center;
+            padding: 22px 10px;
+        }
+
+        @media (max-width: 1050px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 900px) {
+            .sidebar {
+                width: 205px;
+            }
+
+            .cards {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 650px) {
+            .layout {
+                display: block;
+            }
+
+            .sidebar {
+                width: 100%;
+                padding: 15px;
+                border-right: none;
+                border-bottom: 1px solid #eeeeF5;
+            }
+
+            .brand {
+                margin: 5px 10px 15px;
+            }
+
+            .nav-label {
+                margin-top: 15px;
+            }
+
+            .main {
+                padding: 20px 15px;
+            }
+
+            .cards {
+                grid-template-columns: 1fr;
+            }
+
+            .topbar {
+                align-items: flex-start;
+            }
+
+            .topbar h1 {
+                font-size: 23px;
+            }
+
+            table {
+                min-width: 450px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<div class="layout">
+
+    <aside class="sidebar">
+        <div class="brand">Workforce Hub</div>
+
+        <div class="nav-label">MAIN MENU</div>
+
+        <a class="nav-item active" href="{{ url_for('dashboard') }}">
+            ▦ &nbsp; Dashboard
+        </a>
+
+        <a class="nav-item" href="{{ url_for('employees') }}">
+            ♙ &nbsp; Employees
+        </a>
+
+        <a class="nav-item" href="{{ url_for('departments') }}">
+            ▦ &nbsp; Departments
+        </a>
+
+        <div class="nav-label">ACCOUNT</div>
+
+        <a class="nav-item logout" href="{{ url_for('logout') }}">
+            ↪ &nbsp; Logout
+        </a>
+    </aside>
+
+    <main class="main">
+
+        <header class="topbar">
+            <div>
+                <h1>Dashboard</h1>
+                <p class="subtitle">Overview of your workforce</p>
+            </div>
+
+            <div class="user-info">
+                <strong>Welcome, {{ username }}</strong>
+                <span>{{ role }}</span>
+            </div>
+        </header>
+
+        <section class="cards">
+            <div class="card">
+                <div class="card-label">Total Employees</div>
+                <div class="card-value">{{ total_employees }}</div>
+            </div>
+
+            <div class="card">
+                <div class="card-label">Active Employees</div>
+                <div class="card-value">{{ active_employees }}</div>
+            </div>
+
+            <div class="card">
+                <div class="card-label">Departments</div>
+                <div class="card-value">{{ total_departments }}</div>
+            </div>
+        </section>
+
+        <div class="dashboard-grid">
+
+            <section class="section">
+                <h2>Employees by Department</h2>
+
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Department</th>
+                                <th>Employees</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            {% for department in department_stats %}
+                            <tr>
+                                <td>{{ department.department_name }}</td>
+                                <td>
+                                    <span class="count">
+                                        {{ department.employee_count }}
+                                    </span>
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="2" class="empty">
+                                    No departments available.
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>Recently Added Employees</h2>
+
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Employee</th>
+                                <th>Department</th>
+                                <th>Designation</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            {% for employee in recent_employees %}
+                            <tr>
+                                <td>
+                                    <strong>{{ employee.full_name }}</strong><br>
+                                    <small>{{ employee.employee_code }}</small>
+                                </td>
+
+                                <td>
+                                    {{ employee.department_name or "Unassigned" }}
+                                </td>
+
+                                <td>
+                                    {{ employee.designation or "—" }}
+                                </td>
+
+                                <td>
+                                    {% if employee.status == "Active" %}
+                                        <span class="status">Active</span>
+                                    {% elif employee.status == "On Leave" %}
+                                        <span class="status leave">On Leave</span>
+                                    {% else %}
+                                        <span class="status inactive">
+                                            {{ employee.status }}
+                                        </span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="4" class="empty">
+                                    No employees have been added yet.
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+        </div>
+
+    </main>
+</div>
+</body>
+</html>

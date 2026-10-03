@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ 'Edit' if employee else 'Add' }} Employee | Workforce Hub</title>
+    <style>
+        * { box-sizing: border-box; }
+        body { margin: 0; font-family: Arial, sans-serif; background: #f5f7fb; color: #172033; }
+        header { background: white; padding: 20px 5%; border-bottom: 1px solid #e5e7eb; }
+        header a { color: #4f46e5; text-decoration: none; }
+        main { max-width: 850px; margin: 30px auto; padding: 0 20px; }
+        .form-card { background: white; padding: 28px; border: 1px solid #e5e7eb; border-radius: 12px; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+        label { display: block; font-weight: 600; font-size: 14px; margin-bottom: 7px; }
+        input, select, textarea { width: 100%; padding: 11px; border: 1px solid #cbd5e1; border-radius: 7px; font: inherit; }
+        textarea { min-height: 85px; resize: vertical; }
+        .field { margin-bottom: 18px; }
+        .full { grid-column: 1 / -1; }
+        .buttons { display: flex; gap: 10px; margin-top: 8px; }
+        button, .cancel { padding: 12px 17px; border: 0; border-radius: 7px; background: #4f46e5; color: white; cursor: pointer; text-decoration: none; }
+        .cancel { background: #e2e8f0; color: #334155; }
+        .message { padding: 12px; background: #fef2f2; color: #b91c1c; border-radius: 7px; margin-bottom: 15px; }
+        @media (max-width: 600px) { .grid { grid-template-columns: 1fr; } .full { grid-column: auto; } }
+    </style>
+</head>
+<body>
+<header>
+    <a href="{{ url_for('employees') }}">← Back to Employee Directory</a>
+</header>
+
+<main>
+    <h1>{{ 'Edit Employee' if employee else 'Add Employee' }}</h1>
+
+    <div class="form-card">
+        {% with messages = get_flashed_messages() %}
+            {% for message in messages %}
+                <div class="message">{{ message }}</div>
+            {% endfor %}
+        {% endwith %}
+
+        <form method="POST">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+            <div class="grid">
+                <div class="field">
+                    <label for="employee_code">Employee ID *</label>
+                    <input id="employee_code" name="employee_code" required value="{{ request.form.get('employee_code', employee.employee_code if employee else '') }}">
+                </div>
+
+                <div class="field">
+                    <label for="full_name">Full Name *</label>
+                    <input id="full_name" name="full_name" required value="{{ request.form.get('full_name', employee.full_name if employee else '') }}">
+                </div>
+
+                <div class="field">
+                    <label for="email">Email *</label>
+                    <input type="email" id="email" name="email" required value="{{ request.form.get('email', employee.email if employee else '') }}">
+                </div>
+
+                <div class="field">
+                    <label for="phone">Phone</label>
+                    <input id="phone" name="phone" value="{{ request.form.get('phone', employee.phone if employee else '') }}">
+                </div>
+
+                <div class="field">
+                    <label for="department_id">Department</label>
+                    <select id="department_id" name="department_id">
+                        <option value="">Select department</option>
+                        {% for department in departments %}
+                            <option value="{{ department.department_id }}"
+                                {% if request.form.get('department_id', employee.department_id if employee else '')|string == department.department_id|string %}selected{% endif %}>
+                                {{ department.department_name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label for="designation">Designation</label>
+                    <input id="designation" name="designation" value="{{ request.form.get('designation', employee.designation if employee else '') }}">
+                </div>
+
+                <div class="field">
+                    <label for="joining_date">Joining Date</label>
+                    <input type="date" id="joining_date" name="joining_date" value="{{ request.form.get('joining_date', employee.joining_date if employee else '') }}">
+                </div>
+
+                <div class="field">
+                    <label for="salary">Salary</label>
+                    <input type="number" id="salary" name="salary" min="0" step="0.01" value="{{ request.form.get('salary', employee.salary if employee else '0') }}">
+                </div>
+
+                <div class="field">
+                    <label for="status">Status</label>
+                    <select id="status" name="status">
+                        {% for status in ['Active', 'On Leave', 'Inactive'] %}
+                            <option value="{{ status }}"
+                                {% if request.form.get('status', employee.status if employee else 'Active') == status %}selected{% endif %}>
+                                {{ status }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="field full">
+                    <label for="address">Address</label>
+                    <textarea id="address" name="address">{{ request.form.get('address', employee.address if employee else '') }}</textarea>
+                </div>
+            </div>
+
+            <div class="buttons">
+                <button type="submit">{{ 'Save Changes' if employee else 'Add Employee' }}</button>
+                <a class="cancel" href="{{ url_for('employees') }}">Cancel</a>
+            </div>
+        </form>
+    </div>
+</main>
+</body>
+</html>

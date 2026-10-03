@@ -1,0 +1,119 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Department | Workforce Hub</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 30px;
+            background: #f5f6fb;
+            color: #20243a;
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            max-width: 650px;
+            margin: 30px auto;
+        }
+
+        .panel {
+            background: white;
+            padding: 28px;
+            border-radius: 14px;
+            box-shadow: 0 4px 18px #20243a0c;
+        }
+
+        h1 {
+            margin-top: 0;
+        }
+
+        label {
+            display: block;
+            margin-top: 18px;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 12px;
+            margin-top: 8px;
+            border: 1px solid #d9dbea;
+            border-radius: 8px;
+            font: inherit;
+        }
+
+        button, .button {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 11px 16px;
+            border: 0;
+            border-radius: 8px;
+            background: #5146d8;
+            color: white;
+            text-decoration: none;
+            cursor: pointer;
+            font: inherit;
+        }
+
+        .back {
+            background: #ecebff;
+            color: #4036b5;
+            margin-left: 8px;
+        }
+
+        .message {
+            padding: 12px;
+            background: #fff3cd;
+            border-radius: 8px;
+            margin-bottom: 12px;
+        }
+    </style>
+</head>
+
+<body>
+<div class="container">
+    <div class="panel">
+        <h1>Edit Department</h1>
+
+        {% for message in get_flashed_messages() %}
+            <div class="message">{{ message }}</div>
+        {% endfor %}
+
+        <form method="POST">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+            <label for="department_name">Department Name *</label>
+            <input
+                id="department_name"
+                name="department_name"
+                type="text"
+                maxlength="100"
+                value="{{ department.department_name }}"
+                required
+            >
+
+            <label for="description">Description</label>
+            <textarea
+                id="description"
+                name="description"
+                rows="4"
+                maxlength="500"
+            >{{ department.description or "" }}</textarea>
+
+            <button type="submit">Save Changes</button>
+
+            <a class="button back" href="{{ url_for('departments') }}">
+                Cancel
+            </a>
+        </form>
+    </div>
+</div>
+</body>
+</html>

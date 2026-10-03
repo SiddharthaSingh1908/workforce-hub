@@ -1,0 +1,240 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Departments | Workforce Hub</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 32px;
+            background: #f5f6fb;
+            color: #20243a;
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: auto;
+        }
+
+        .topbar, .panel {
+            background: white;
+            padding: 24px;
+            border-radius: 14px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 18px #20243a0c;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+        }
+
+        h1, h2 {
+            margin-top: 0;
+        }
+
+        input, textarea {
+            box-sizing: border-box;
+            width: 100%;
+            padding: 11px;
+            margin: 8px 0 14px;
+            border: 1px solid #d9dbea;
+            border-radius: 8px;
+            font: inherit;
+        }
+
+        button, .button {
+            display: inline-block;
+            border: 0;
+            border-radius: 8px;
+            padding: 10px 15px;
+            background: #5146d8;
+            color: white;
+            text-decoration: none;
+            cursor: pointer;
+            font: inherit;
+        }
+
+        button:disabled {
+            background: #b8b8c5;
+            cursor: not-allowed;
+        }
+
+        .danger {
+            background: #d94b5b;
+        }
+
+        .back {
+            background: #ecebff;
+            color: #4036b5;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 13px 10px;
+            text-align: left;
+            border-bottom: 1px solid #eeeef4;
+        }
+
+        th {
+            color: #656b80;
+        }
+
+        .message {
+            padding: 12px;
+            background: #fff3cd;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+
+        .actions form {
+            display: inline;
+        }
+
+        .actions .button {
+            margin-right: 5px;
+        }
+
+        @media (max-width: 650px) {
+            body {
+                padding: 14px;
+            }
+
+            .topbar {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .table-wrapper {
+                overflow-x: auto;
+            }
+
+            table {
+                min-width: 650px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<div class="container">
+
+    <div class="topbar">
+        <div>
+            <h1>Departments</h1>
+            <p>Manage your organization's departments.</p>
+        </div>
+
+        <a class="button back" href="{{ url_for('dashboard') }}">
+            Dashboard
+        </a>
+    </div>
+
+    {% for message in get_flashed_messages() %}
+        <div class="message">{{ message }}</div>
+    {% endfor %}
+
+    <div class="panel">
+        <h2>Add Department</h2>
+
+        <form method="POST">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+            <label for="department_name">Department Name *</label>
+            <input
+                id="department_name"
+                name="department_name"
+                type="text"
+                maxlength="100"
+                required
+            >
+
+            <label for="description">Description</label>
+            <textarea
+                id="description"
+                name="description"
+                rows="3"
+                maxlength="500"
+            ></textarea>
+
+            <button type="submit">Add Department</button>
+        </form>
+    </div>
+
+    <div class="panel">
+        <h2>Department Directory</h2>
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Department</th>
+                        <th>Description</th>
+                        <th>Employees</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for department in departments %}
+                    <tr>
+                        <td>{{ department.department_name }}</td>
+                        <td>{{ department.description or "—" }}</td>
+                        <td>{{ department.employee_count }}</td>
+
+                        <td class="actions">
+                            <a
+                                class="button back"
+                                href="{{ url_for('edit_department', department_id=department.department_id) }}"
+                            >
+                                Edit
+                            </a>
+
+                            <form
+                                method="POST"
+                                action="{{ url_for('delete_department', department_id=department.department_id) }}"
+                                onsubmit="return confirm('Delete this department?');"
+                            >
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                                <button
+                                    class="danger"
+                                    type="submit"
+                                    {% if department.employee_count > 0 %}
+                                        disabled
+                                        title="Employees are assigned"
+                                    {% endif %}
+                                >
+                                    Delete
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+
+                    {% else %}
+                    <tr>
+                        <td colspan="4">No departments found.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+</body>
+</html>
